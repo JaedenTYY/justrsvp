@@ -6,7 +6,6 @@ import { clerkClient } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
-
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
 
@@ -60,9 +59,9 @@ export async function POST(req: Request) {
     const user = {
       clerkId: id,
       email: email_addresses[0].email_address,
-      username: username || '', // Ensuring username is always a string
-      firstName: first_name || '', // Ensuring firstName is always a string
-      lastName: last_name || '', // Ensuring lastName is always a string
+      username: username || '',
+      firstName: first_name || '',
+      lastName: last_name || '',
       photo: image_url,
     }
 
@@ -71,7 +70,7 @@ export async function POST(req: Request) {
     if(newUser) {
       await clerkClient.users.updateUserMetadata(id, {
         publicMetadata: {
-          userId: newUser._id
+          userId: newUser.id  // Changed from newUser._id to newUser.id
         }
       })
     }
@@ -83,9 +82,9 @@ export async function POST(req: Request) {
     const {id, image_url, first_name, last_name, username } = evt.data
 
     const user = {
-      firstName: first_name || '', // Ensuring firstName is always a string
-      lastName: last_name || '', // Ensuring lastName is always a string
-      username: username || '', // Ensuring username is always a string
+      firstName: first_name || '',
+      lastName: last_name || '',
+      username: username || '',
       photo: image_url,
     }
 
