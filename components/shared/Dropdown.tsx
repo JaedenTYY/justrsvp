@@ -17,7 +17,8 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
     const [newCategory, setNewCategory] = useState('');
 
     const handleAddCategory = () => {
-    
+        
+
     }
 
     return (
@@ -43,7 +44,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => startTransition(handleAddCategory)}></AlertDialogAction>
+                    <AlertDialogAction onClick={() => startTransition(handleAddCategory)}>Add</AlertDialogAction>
                     </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>

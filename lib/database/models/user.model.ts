@@ -1,5 +1,6 @@
 import pool from '../database';
 import { CreateUserParams, UpdateUserParams } from '@/types';
+import { sql } from '@vercel/postgres';
 
 
 async function createUserTable() {

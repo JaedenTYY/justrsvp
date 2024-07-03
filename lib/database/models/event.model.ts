@@ -1,4 +1,5 @@
 import pool from '../database';
+import { sql } from '@vercel/postgres';
 
 async function createEventTable() {
   const client = await pool.connect();

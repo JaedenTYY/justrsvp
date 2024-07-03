@@ -10,8 +10,13 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.1.6",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@hookform/resolvers": "^3.6.0",
+    "@mui/material": "^5.15.21",
+    "@mui/x-date-pickers": "^7.8.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
+    "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-select": "^2.1.1",
@@ -52,7 +57,7 @@
     "@types/react-dom": "^18",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5.5.3"
   },
   "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
   "main": "index.js",
