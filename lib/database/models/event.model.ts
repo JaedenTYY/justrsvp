@@ -1,8 +1,7 @@
-import pool from '../database';
 import { sql } from '@vercel/postgres';
 
 async function createEventTable() {
-  const client = await pool.connect();
+  const client = await sql.connect();
   try {
     await client.query(`
       CREATE TABLE IF NOT EXISTS events (
@@ -55,7 +54,7 @@ export interface IEventWithDetails extends IEvent {
 
 export class Event {
   static async create(event: Omit<IEvent, 'id' | 'created_at'>): Promise<IEvent> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query(
         `INSERT INTO events (title, description, location, image_url, start_date_time, end_date_time, price, is_free, url, category_id, organizer_id) 
@@ -70,7 +69,7 @@ export class Event {
   }
 
   static async findById(id: number): Promise<IEventWithDetails | null> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query(`
         SELECT e.*, c.name as category_name, u.first_name as organizer_first_name, u.last_name as organizer_last_name
@@ -86,7 +85,7 @@ export class Event {
   }
 
   static async getAll(): Promise<IEventWithDetails[]> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query(`
         SELECT e.*, c.name as category_name, u.first_name as organizer_first_name, u.last_name as organizer_last_name
@@ -101,7 +100,7 @@ export class Event {
   }
 
   static async update(id: number, eventData: Partial<IEvent>): Promise<IEvent | null> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const setClause = Object.keys(eventData)
         .map((key, index) => `${key} = $${index + 2}`)
@@ -119,7 +118,7 @@ export class Event {
   }
 
   static async delete(id: number): Promise<boolean> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query('DELETE FROM events WHERE id = $1', [id]);
       return result.rowCount ? result.rowCount > 0 : false;
@@ -129,7 +128,7 @@ export class Event {
   }
 
   static async getEventsByOrganizer(organizerId: number): Promise<IEvent[]> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query('SELECT * FROM events WHERE organizer_id = $1', [organizerId]);
       return result.rows;
@@ -139,7 +138,7 @@ export class Event {
   }
 
   static async removeOrganizer(organizerId: number): Promise<void> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       await client.query('UPDATE events SET organizer_id = NULL WHERE organizer_id = $1', [organizerId]);
     } finally {

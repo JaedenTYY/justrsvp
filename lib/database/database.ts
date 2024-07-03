@@ -1,8 +1,14 @@
-import { Pool } from '@vercel/postgres';
 import { sql } from '@vercel/postgres';
 
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL
-});
+export async function connectToDatabase() {
+  try {
+    await sql`SELECT 1`; // This is a simple query to test the connection
+    console.log('Connected to the database successfully');
+  } catch (error) {
+    console.error('Failed to connect to the database:', error);
+    throw error;
+  }
+}
 
-export default pool;
+// You can export the sql function if you need to use it elsewhere
+export { sql };

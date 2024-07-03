@@ -1,10 +1,10 @@
-import pool from '../database';
+
 import { CreateUserParams, UpdateUserParams } from '@/types';
 import { sql } from '@vercel/postgres';
 
 
 async function createUserTable() {
-  const client = await pool.connect();
+  const client = await sql.connect();
   try {
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -39,7 +39,7 @@ export interface IUser {
 
 export class User {
   static async create(user: CreateUserParams): Promise<IUser> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query(
         `INSERT INTO users (clerk_id, email, username, first_name, last_name, photo) 
@@ -54,7 +54,7 @@ export class User {
   }
 
   static async findById(id: number): Promise<IUser | null> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query('SELECT * FROM users WHERE id = $1', [id]);
       return result.rows.length > 0 ? result.rows[0] : null;
@@ -64,7 +64,7 @@ export class User {
   }
 
   static async findByClerkId(clerkId: string): Promise<IUser | null> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query('SELECT * FROM users WHERE clerk_id = $1', [clerkId]);
       return result.rows.length > 0 ? result.rows[0] : null;
@@ -74,7 +74,7 @@ export class User {
   }
 
   static async updateByClerkId(clerkId: string, updateData: UpdateUserParams): Promise<IUser | null> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const setClause = Object.keys(updateData)
         .map((key, index) => `${key} = $${index + 2}`)
@@ -92,7 +92,7 @@ export class User {
   }
 
   static async delete(id: number): Promise<IUser | null> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
       return result.rows.length > 0 ? result.rows[0] : null;

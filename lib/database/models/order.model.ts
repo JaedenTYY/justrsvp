@@ -1,8 +1,7 @@
-import pool from '../database';
 import { sql } from '@vercel/postgres';
 
 async function createOrderTable() {
-  const client = await pool.connect();
+  const client = await sql.connect();
   try {
     await client.query(`
       CREATE TABLE IF NOT EXISTS order (
@@ -43,7 +42,7 @@ export interface IOrderItem {
 
 export class Order {
   static async create(order: Omit<IOrder, 'id' | 'created_at'>): Promise<IOrder> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query(
         `INSERT INTO order (stripe_id, total_amount, event_id, buyer_id) 
@@ -58,7 +57,7 @@ export class Order {
   }
 
   static async findByStripeId(stripeId: string): Promise<IOrder | null> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query('SELECT * FROM orders WHERE stripe_id = $1', [stripeId]);
       return result.rows.length > 0 ? result.rows[0] : null;
@@ -68,7 +67,7 @@ export class Order {
   }
 
   static async getOrdersByEvent(eventId: number): Promise<IOrder[]> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query('SELECT * FROM order WHERE event_id = $1', [eventId]);
       return result.rows;
@@ -78,7 +77,7 @@ export class Order {
   }
 
   static async getOrdersByUser(userId: number): Promise<IOrder[]> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query('SELECT * FROM order WHERE buyer_id = $1', [userId]);
       return result.rows;
@@ -88,7 +87,7 @@ export class Order {
   }
 
   static async getOrdersWithDetails(): Promise<IOrderItem[]> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       const result = await client.query(`
         SELECT 
@@ -111,7 +110,7 @@ export class Order {
     }
   }
   static async removeBuyer(buyerId: number): Promise<void> {
-    const client = await pool.connect();
+    const client = await sql.connect();
     try {
       await client.query('UPDATE orders SET buyer_id = NULL WHERE buyer_id = $1', [buyerId]);
     } finally {

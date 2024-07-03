@@ -1,23 +1,5 @@
-import pool from '../database';
 import { sql } from '@vercel/postgres';
-
-async function createCategoryTable() {
-  const client = await pool.connect();
-  try {
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS category (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) UNIQUE NOT NULL
-      );
-    `);
-    console.log('Category table created successfully');
-  } catch (error) {
-    console.error('Error creating category table:', error);
-  } finally {
-    client.release();
-  }
-}
-createCategoryTable();
+import { CreateCategoryParams } from '@/types';
 
 export interface ICategory {
   id: string;
@@ -25,28 +7,28 @@ export interface ICategory {
 }
 
 export class Category {
-  static async create(name: string): Promise<ICategory> {
-    const client = await pool.connect();
-    try {
-      const result = await client.query(
-        'INSERT INTO category (name) VALUES ($1) RETURNING *',
-        [name]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  static async create({ categoryName }: CreateCategoryParams): Promise<ICategory> {
+    const result = await sql<ICategory>`
+      INSERT INTO category (name) 
+      VALUES (${categoryName}) 
+      RETURNING id::text, name
+    `;
+    return result.rows[0];
   }
 
   static async findAll(): Promise<ICategory[]> {
-    const client = await pool.connect();
-    try {
-      const result = await client.query('SELECT * FROM category');
-      return result.rows;
-    } finally {
-      client.release();
-    }
+    const result = await sql<ICategory>`
+      SELECT id::text, name FROM category
+    `;
+    return result.rows;
   }
 
-  // Add other methods as needed (findById, update, delete, etc.)
+  static async findByName(categoryName: string): Promise<ICategory | null> {
+    const result = await sql<ICategory>`
+      SELECT id::text, name FROM category 
+      WHERE name = ${categoryName} 
+      LIMIT 1
+    `;
+    return result.rows[0] || null;
+  }
 }
